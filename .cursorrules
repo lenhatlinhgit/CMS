@@ -1,0 +1,104 @@
+# Chuẩn bị Laravel + Filament cho Production
+
+## 1. Đổi môi trường trong file `.env`
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+```
+
+**Ý nghĩa:**
+- `APP_ENV=production` → báo cho Laravel biết đang chạy ở môi trường thật
+- `APP_DEBUG=false` → tắt hiển thị lỗi chi tiết, tránh lộ thông tin nhạy cảm cho người dùng
+
+---
+
+## 2. Chạy lệnh optimize
+
+```bash
+php artisan optimize
+```
+
+**Kết quả:**
+
+| Thành phần | Trạng thái |
+|---|---|
+| config | CACHED ✅ |
+| events | CACHED ✅ |
+| routes | CACHED ✅ |
+| views | CACHED ✅ |
+| blade-icons | CACHED ✅ |
+| filament | CACHED ✅ |
+
+**Ý nghĩa:** Bình thường mỗi lần người dùng vào trang, Laravel phải đọc lại toàn bộ file config, routes, views từ đầu. Sau khi cache, Laravel gộp tất cả thành 1 file duy nhất → chỉ cần đọc 1 lần, nhanh hơn nhiều.
+
+| | Không cache | Có cache |
+|---|---|---|
+| Config | Đọc 20+ file | Đọc 1 file |
+| Routes | Quét toàn bộ `routes/` | Đọc 1 file |
+| Views | Compile Blade mỗi lần | Dùng file PHP đã compile sẵn |
+
+> ⚠️ **Lưu ý quan trọng:** Nếu bạn thay đổi config/routes/views sau khi đã cache, Laravel vẫn dùng **cache cũ** và không nhận thay đổi mới. Cần chạy lại:
+> ```bash
+> php artisan optimize:clear  # xóa cache cũ
+> php artisan optimize        # tạo cache mới
+> ```
+> Trong lúc đang **dev** thì không nên cache, chỉ chạy `php artisan optimize:clear` để Laravel luôn đọc file thật.
+
+---
+
+## 3. Tạo symbolic link cho Storage
+
+```bash
+php artisan storage:link
+```
+
+**Kết quả:** `public/storage` → `storage/app/public` ✅
+
+**Ý nghĩa:** Trong Laravel có 2 thư mục quan trọng:
+
+- `storage/app/public` → nơi Laravel **lưu file** upload vào, nhưng nằm bên trong server, bên ngoài không truy cập được
+- `public/` → thư mục duy nhất mà trình duyệt **có thể truy cập** được
+
+`storage:link` tạo một **đường tắt (symlink)** từ `public/storage` trỏ vào `storage/app/public`:
+
+```
+public/storage  →  storage/app/public
+(trình duyệt       (nơi file thật
+ truy cập được)     được lưu)
+```
+
+Ví dụ thực tế — bạn upload ảnh `avatar.jpg`:
+
+| | Kết quả |
+|---|---|
+| Không có symlink | `http://site.com/storage/avatar.jpg` → ❌ 404 không tìm thấy |
+| Có symlink | `http://site.com/storage/avatar.jpg` → ✅ hiển thị ảnh bình thường |
+
+---
+
+## Kết quả kiểm tra (`php artisan about`)
+
+| Thứ | Trạng thái |
+|---|---|
+| Environment | production ✅ |
+| Debug Mode | OFF ✅ |
+| Config | CACHED ✅ |
+| Routes | CACHED ✅ |
+| Views | CACHED ✅ |
+| Storage | LINKED ✅ |
+| Blade Icons | CACHED ✅ |
+| Panel Components (Filament) | CACHED ✅ |
+
+---
+
+## Những thứ cần làm thêm khi deploy lên server thật
+
+| Thứ | Lý do |
+|---|---|
+| Thuê VPS / Hosting | Nơi chạy app trên internet |
+| Tên miền (domain) | Để người dùng truy cập bằng địa chỉ dễ nhớ |
+| SSL (HTTPS) | Bảo mật, trình duyệt sẽ cảnh báo nếu không có |
+| Cấu hình Mail thật | Hiện đang dùng `log`, email không gửi được thật |
+| Database trên server | Không dùng database máy local nữa |
+| Storage (S3/R2) | Tùy project, dùng khi cần lưu nhiều file/ảnh |

@@ -1,0 +1,9 @@
+{
+    "installed": [
+        {
+            "name": "flexiwind-base",
+            "namespace": "@flexiwind",
+            "version": "1.0.0"
+        }
+    ]
+}
