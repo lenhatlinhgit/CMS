@@ -5,28 +5,31 @@
         <title>{{ $title }} — {{ config('app.name') }}</title>
     </x-slot:head>
 
-    <header class="border-b border-border bg-card">
-        <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
-            <a href="{{ route('home') }}" class="text-lg font-semibold text-fg-title">{{ config('app.name') }}</a>
-            <nav class="flex flex-wrap items-center gap-4 text-sm">
-                <a href="{{ route('blog.index') }}" class="hover:text-primary">Blog</a>
-                <a href="{{ route('search') }}" class="hover:text-primary">Search</a>
-                @auth
-                    @if(auth()->user()->role->panelPath())
-                        <a href="{{ auth()->user()->role->panelPath() }}" class="hover:text-primary">Dashboard</a>
-                    @else
-                        <a href="{{ route('account.index') }}" class="hover:text-primary">Account</a>
-                    @endif
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="hover:text-primary">Logout</button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="hover:text-primary">Login</a>
-                    <a href="{{ route('register') }}" class="btn btn-sm btn-solid btn-solid-primary">Register</a>
-                @endauth
-            </nav>
+    <header class="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+            <a href="{{ route('home') }}" class="shrink-0 text-lg font-semibold tracking-tight text-fg-title">
+                {{ config('app.name') }}
+            </a>
+
+            <div class="flex min-w-0 flex-1 items-center justify-end gap-4 sm:gap-6">
+                <nav class="hidden items-center gap-1 md:flex" aria-label="Main">
+                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">Home</x-nav-link>
+                    <x-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.*')">Blog</x-nav-link>
+                    <x-nav-link :href="route('search')" :active="request()->routeIs('search')">Search</x-nav-link>
+                </nav>
+
+                <div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                    <x-theme-toggle />
+                    <x-account-menu />
+                </div>
+            </div>
         </div>
+
+        <nav class="flex gap-1 overflow-x-auto border-t border-border px-4 py-2 md:hidden" aria-label="Main">
+            <x-nav-link :href="route('home')" :active="request()->routeIs('home')">Home</x-nav-link>
+            <x-nav-link :href="route('blog.index')" :active="request()->routeIs('blog.*')">Blog</x-nav-link>
+            <x-nav-link :href="route('search')" :active="request()->routeIs('search')">Search</x-nav-link>
+        </nav>
     </header>
 
     <main class="mx-auto max-w-5xl px-4 py-8">

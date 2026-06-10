@@ -6,10 +6,13 @@ use App\Filament\Admin\Widgets\Admin\PostsChart;
 use App\Filament\Admin\Widgets\Admin\PublishedTrendChart;
 use App\Filament\Admin\Widgets\Admin\RecentPostsTable;
 use App\Filament\Admin\Widgets\Admin\StatsOverview;
+use App\Filament\Shared\Concerns\HasViewSiteHeaderAction;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
 {
+    use HasViewSiteHeaderAction;
+
     protected static ?string $title = 'Dashboard';
 
     protected static ?string $navigationLabel = 'Dashboard';

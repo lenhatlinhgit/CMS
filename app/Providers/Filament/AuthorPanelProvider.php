@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Author\Pages\Dashboard;
+use App\Providers\Filament\Concerns\ConfiguresPublicSiteNavigation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,9 +20,11 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AuthorPanelProvider extends PanelProvider
 {
+    use ConfiguresPublicSiteNavigation;
+
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        return $this->configurePublicSiteNavigation($panel)
             ->id('author')
             ->path('author')
             ->viteTheme('resources/css/app.css')

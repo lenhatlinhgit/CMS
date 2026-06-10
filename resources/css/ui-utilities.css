@@ -198,3 +198,13 @@
         --ui-subtle-border: --alpha(var(--color-danger-900) / 60%);
     }
 }
+
+@layer components {
+    .account-menu-item {
+        @apply block rounded-lg px-3 py-2 text-sm font-medium text-fg transition-colors hover:bg-bg-muted hover:text-fg-title;
+    }
+
+    .account-menu-item-danger {
+        @apply text-danger hover:bg-danger/10 hover:text-danger;
+    }
+}
