@@ -25,6 +25,10 @@ class PostResource extends Resource
 
     protected static ?string $navigationLabel = 'Review posts';
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Editorial';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return PostFormSchema::configure($schema, allowRejectionReason: true);

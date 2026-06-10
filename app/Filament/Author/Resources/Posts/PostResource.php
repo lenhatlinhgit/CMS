@@ -2,7 +2,6 @@
 
 namespace App\Filament\Author\Resources\Posts;
 
-use App\Enums\PostStatus;
 use App\Filament\Author\Resources\Posts\Pages\CreatePost;
 use App\Filament\Author\Resources\Posts\Pages\EditPost;
 use App\Filament\Author\Resources\Posts\Pages\ListPosts;
@@ -26,6 +25,8 @@ class PostResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPencilSquare;
 
     protected static ?string $navigationLabel = 'My posts';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -58,5 +59,4 @@ class PostResource extends Resource
             'edit' => EditPost::route('/{record}/edit'),
         ];
     }
-
 }

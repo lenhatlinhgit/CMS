@@ -2,15 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Editor\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -25,7 +24,10 @@ class EditorPanelProvider extends PanelProvider
         return $panel
             ->id('editor')
             ->path('editor')
+            ->viteTheme('resources/css/app.css')
+            ->brandName(config('app.name').' · Editor')
             ->login(null)
+            ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Blue,
             ])
@@ -35,9 +37,6 @@ class EditorPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Editor/Widgets'), for: 'App\Filament\Editor\Widgets')
-            ->widgets([
-                AccountWidget::class,
-            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
